@@ -20,6 +20,7 @@ namespace TestProject
         public bool occupied;
 
         public float distanceFromTarget;
+        public Vector2 direction;
         public List<Tile> AdjacentNeighbors { get; set; }
         public List<Tile> VerticalNeighbors { get; set; }
 
@@ -43,9 +44,11 @@ namespace TestProject
         {
             spriteBatch.Draw(texture, position, color);
 
-            if (!occupied && !IsSolid)
+            if (!IsSolid)
             {
-                spriteBatch.DrawString(TextureManager.Font, distanceFromTarget.ToString(), new Vector2(position.X + 12, position.Y + 4), Color.Red);
+                
+                
+                spriteBatch.DrawString(TextureManager.Font, distanceFromTarget.ToString(), new Vector2(position.X + 12, position.Y + 4), Color.Green);
             }
         }
     }

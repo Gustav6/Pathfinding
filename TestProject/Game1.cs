@@ -13,8 +13,8 @@ namespace TestProject
         public Game1()
         {
             graphics = new GraphicsDeviceManager(this);
-            graphics.PreferredBackBufferWidth = 1280;
-            graphics.PreferredBackBufferHeight = 720;
+            graphics.PreferredBackBufferWidth = 1920;
+            graphics.PreferredBackBufferHeight = 1080;
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
         }
@@ -42,35 +42,9 @@ namespace TestProject
 
             GameManager.Instance.Update(gameTime);
 
-            SetTile();
+            //SetTile();
 
             base.Update(gameTime);
-        }
-
-        private void SetTile()
-        {
-            if (Input.MouseHasBeenPressed(Input.currentMS.LeftButton, Input.prevMS.LeftButton))
-            {
-                for (int i = 0; i < Library.TileMap.tiles.Count; i++)
-                {
-                    if (Input.GetMouseBounds(true).Intersects(Library.TileMap.tiles[i].hitbox) && !Library.TileMap.tiles[i].IsSolid)
-                    {
-                        if (Library.previousTarget != null)
-                        {
-                            Library.previousTarget.occupied = false;
-                            Library.previousTarget.color = Color.White;
-
-                            Library.previousTarget = null;
-                        }
-
-                        Library.TileMap.tiles[i].occupied = true;
-                        Library.TileMap.tiles[i].color = Color.Green;
-
-                        Library.fieldPathfinding.targetTile = Library.TileMap.tiles[i];
-                        Library.fieldPathfinding.T();
-                    }
-                }
-            }
         }
 
         protected override void Draw(GameTime gameTime)

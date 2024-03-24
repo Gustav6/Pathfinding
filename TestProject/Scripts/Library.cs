@@ -14,8 +14,6 @@ namespace TestProject
         public static Player PlayerInstance { get; set; }
         public static TileMap TileMap { get; set; }
 
-        public static Tile previousTarget;
-
         public static VectorFieldPathfinding fieldPathfinding = new();
 
         public static Texture2D CreateTexture(GraphicsDevice device, int width, int height, Func<int, Color> paint)

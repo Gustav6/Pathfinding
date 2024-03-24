@@ -4,9 +4,11 @@
   <Platform>DesktopGL</Platform>
   <Config />
   <SourceFiles>
-    <File>C:/Users/gusta/source/repos/TestProject/TestProject/Content/File.spritefont</File>
+    <File>C:/Users/gustav.ekstrom1/Documents/GitHub/Pathfinding/TestProject/Content/800px-U+2192.svg.png</File>
+    <File>C:/Users/gustav.ekstrom1/Documents/GitHub/Pathfinding/TestProject/Content/File.spritefont</File>
   </SourceFiles>
   <DestFiles>
+    <File>arrow</File>
     <File>spritefont</File>
   </DestFiles>
 </SourceFileCollection>

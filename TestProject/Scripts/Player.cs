@@ -12,16 +12,18 @@ namespace TestProject
 {
     public class Player : Moveable, ICollidable
     {
-        private Rectangle hitbox;
+        public Rectangle hitbox;
+
+        public Rectangle tileHitbox;
 
         public Player(Vector2 startingPosition)
         {
             Texture = TextureManager.Textures[TestProject.Texture.playerTexture];
-            MovementSpeed = 200;
+            MovementSpeed = 500;
             Position = startingPosition;
             Color = Color.White;
             hitbox = new Rectangle((int)Position.X, (int)Position.Y, Texture.Width, Texture.Height);
-            IsRemoved = false;
+            tileHitbox = new Rectangle((int)Position.X + Texture.Width / 2, (int)Position.Y + Texture.Height / 2, 1, 1);
         }
 
         public override void Update(GameTime gameTime)
@@ -30,17 +32,15 @@ namespace TestProject
 
             Move(gameTime);
 
-            hitbox.Location = Position.ToPoint();
+            if (direction != Vector2.Zero)
+            {
+                hitbox.Location = Position.ToPoint();
+                tileHitbox.Location = new Vector2(Position.X + Texture.Width / 2, Position.Y + Texture.Height / 2).ToPoint();
+            }
 
             base.Update(gameTime);
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
-        {
-            base.Draw(spriteBatch);
-
-            //Library.DrawHitbox(spriteBatch, hitbox.Location.ToVector2());
-        }
 
         private void Control()
         {
@@ -74,6 +74,12 @@ namespace TestProject
         public void OnCollision(GameObject gameObject)
         {
 
+        }
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            base.Draw(spriteBatch);
+
+            //Library.DrawHitbox(spriteBatch, hitbox.Location.ToVector2());
         }
     }
 }

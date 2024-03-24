@@ -10,10 +10,13 @@ namespace TestProject
 {
     public class Enemy : Moveable, ICollidable
     {
+        public Rectangle tileHitbox;
+
         public Enemy(Vector2 spawnLocation)
         {
             Texture = TextureManager.Textures[TestProject.Texture.enemyTexture];
             Position = spawnLocation;
+            MovementSpeed = 50;
             Color = Color.White;
             IsRemoved = false;
         }
@@ -27,29 +30,36 @@ namespace TestProject
         {
             //Move(gameTime);
 
-            Pathfinding();
+            tileHitbox.Location = new Vector2(Position.X + Texture.Width / 2, Position.Y + Texture.Height / 2).ToPoint();
+
+            Pathfind();
+
+            Move(gameTime);
 
             base.Update(gameTime);
         }
 
-        public override void Draw(SpriteBatch spriteBatch)
+        public void Pathfind()
         {
-            base.Draw(spriteBatch);
-        }
-
-        public void Pathfinding()
-        {
-
-        }
-
-        public void FindPath(Vector2 startPosition, Vector2 targetPosition)
-        {
+            for (int i = 0; i < Library.TileMap.tiles.Count; i++)
+            {
+                if (tileHitbox.Intersects(Library.TileMap.tiles[i].hitbox))
+                {
+                    direction = Library.TileMap.tiles[i].direction;
+                    break;
+                }
+            }
 
         }
 
         public void OnCollision(GameObject gameObject)
         {
 
+        }
+
+        public override void Draw(SpriteBatch spriteBatch)
+        {
+            base.Draw(spriteBatch);
         }
     }
 }

@@ -15,8 +15,8 @@ namespace TestProject
         private readonly int tileHeight = 48;
 
         public static SpriteFont Font { get; private set; }
-        public static Dictionary<Texture, Texture2D> Textures {get; set; }
-        public static Dictionary<TileTexture, Texture2D> TileTextures { get; set; }
+        public static Dictionary<Texture, Texture2D> Textures { get; private set; }
+        public static Dictionary<TileTexture, Texture2D> TileTextures { get; private set; }
 
         public void LoadTextures(ContentManager content, GraphicsDevice graphics)
         {
@@ -28,7 +28,8 @@ namespace TestProject
             #region Regular textures
             //Textures.TryAdd(Texture.playerTexture, content.Load<Texture2D>(""));
             //Textures.TryAdd(Texture.enemyTexture, content.Load<Texture2D>(""));
-            Textures.TryAdd(Texture.playerTexture, Library.CreateTexture(graphics, tileWidth, tileHeight, pixel => Color.DarkGreen));
+            Textures.TryAdd(Texture.arrowTexture, content.Load<Texture2D>("arrow"));
+            Textures.TryAdd(Texture.playerTexture, Library.CreateTexture(graphics, tileWidth, tileHeight * 2, pixel => Color.DarkGreen));
             Textures.TryAdd(Texture.enemyTexture, Library.CreateTexture(graphics, tileWidth, tileHeight, pixel => Color.Red));
             Textures.TryAdd(Texture.hitboxTexture, Library.CreateTexture(graphics, tileWidth, tileHeight, pixel => Color.Green));
             #endregion
@@ -47,6 +48,7 @@ namespace TestProject
         playerTexture,
         enemyTexture,
         hitboxTexture,
+        arrowTexture,
     }
 
     public enum TileTexture
