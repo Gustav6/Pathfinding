@@ -2,6 +2,7 @@
 using Microsoft.Xna.Framework.Graphics;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
@@ -12,20 +13,13 @@ namespace TestProject
     {
         public Tile target;
         private Tile previousTarget;
+        public readonly float distanceFromTarget;
 
-        public void SetTarget()
+
+        public void CreatePathfindingField()
         {
             if (Library.PlayerInstance != null)
             {
-                for (int i = 0; i < Library.TileMap.tiles.Count; i++)
-                {
-                    if (Library.PlayerInstance.tileHitbox.Intersects(Library.TileMap.tiles[i].hitbox))
-                    {
-                        target = Library.TileMap.tiles[i];
-                        break;
-                    }
-                }
-
                 if (previousTarget != null)
                 {
                     previousTarget.occupied = false;
@@ -33,12 +27,15 @@ namespace TestProject
                     if (target != previousTarget)
                     {
                         CreateHeatMap(target);
-                        GiveVector();
+                        GiveDirection();
                     }
                 }
 
-                target.occupied = true;
-                previousTarget = target;
+                if (target != null)
+                {
+                    target.occupied = true;
+                    previousTarget = target;
+                }
             }
         }
 
@@ -47,9 +44,9 @@ namespace TestProject
             List<Tile> openTiles = new();
             HashSet<Tile> closedTiles = new();
 
-            for (int i = 0; i < Library.TileMap.tiles.Count; i++)
+            for (int i = 0; i < Library.TileMap.AllTiles.Count; i++)
             {
-                Library.TileMap.tiles[i].distanceFromTarget = 0;
+                Library.TileMap.AllTiles[i].distanceFromTarget = 0;
             }
 
             Tile selectedTile = targetTile;
@@ -59,15 +56,13 @@ namespace TestProject
             while (openTiles.Count != 0)
             {
                 #region Clear neighbors
-                List<Tile> neighbors = new();
 
-                neighbors.AddRange(selectedTile.VerticalNeighbors);
-                neighbors.AddRange(selectedTile.AdjacentNeighbors);
+                List<Tile> totalNeighbors = new();
+
+                totalNeighbors.AddRange(selectedTile.AdjacentNeighbors);
                 #endregion
 
-                // Check neighboring tiles
-
-                foreach (Tile neighboringTile in neighbors)
+                foreach (Tile neighboringTile in totalNeighbors)
                 {
                     #region Give distance from target
                     if (!neighboringTile.IsSolid)
@@ -105,31 +100,218 @@ namespace TestProject
             }
         }
 
-        private void GiveVector()
+        private void GiveDirection()
         {
-            foreach (Tile tile in Library.TileMap.tiles)
+            foreach (Tile tile in Library.TileMap.AllTiles)
             {
-                Vector2 direction = Vector2.Zero;
-
-                List<Tile> neighbors = new();
-
-                neighbors.AddRange(tile.VerticalNeighbors);
-                neighbors.AddRange(tile.AdjacentNeighbors);
-
-                for (int i = 0; i < neighbors.Count; i++)
+                if (tile != target)
                 {
-                    Vector2 neighborsDirection = new();
+                    List<Tile> neighbors = new();
+                    List<Tile> adjacentNeighbors = new();
 
-                    if (neighbors[i].distanceFromTarget != 0)
+                    neighbors.AddRange(tile.VerticalNeighbors);
+                    neighbors.AddRange(tile.AdjacentNeighbors);
+                    adjacentNeighbors.AddRange(tile.AdjacentNeighbors);
+
+                    tile.direction = LowestNumberDirection(neighbors, tile);
+                }
+            }
+        }
+
+        private Vector2 CombinedVectorDirection(List<Tile> neighbors, Tile currentTile)
+        {
+            Vector2 direction = Vector2.Zero;
+
+            for (int i = 0; i < neighbors.Count; i++)
+            {
+                if (!neighbors[i].IsSolid)
+                {
+                    float xDirection, yDirection;
+
+                    if (neighbors[i].Position.X > currentTile.Position.X)
                     {
-                        neighborsDirection = new(1 / neighbors[i].distanceFromTarget, 1 / neighbors[i].distanceFromTarget);
+                        xDirection = neighbors[i].distanceFromTarget;
+                    }
+                    else if (neighbors[i].Position.X < currentTile.Position.X)
+                    {
+                        xDirection = -neighbors[i].distanceFromTarget;
+                    }
+                    else
+                    {
+                        xDirection = 0;
                     }
 
-                    direction += neighborsDirection;
-                }
+                    if (neighbors[i].Position.Y > currentTile.Position.Y)
+                    {
+                        yDirection = neighbors[i].distanceFromTarget;
+                    }
+                    else if (neighbors[i].Position.Y < currentTile.Position.Y)
+                    {
+                        yDirection = -neighbors[i].distanceFromTarget;
+                    }
+                    else
+                    {
+                        yDirection = 0;
+                    }
 
-                tile.direction = direction;
+                    if (yDirection != 0)
+                    {
+                        yDirection = 1 / yDirection;
+                    }
+                    if (xDirection != 0)
+                    {
+                        xDirection = 1 / xDirection;
+                    }
+
+                    direction += new Vector2(xDirection, yDirection);
+                }
             }
+
+            if (direction.X > 1)
+            {
+                direction.X = 1;
+            }
+            else if (direction.X < -1)
+            {
+                direction.X = -1;
+            }
+
+            if (direction.Y > 1)
+            {
+                direction.Y = 1;
+            }
+            else if (direction.Y < -1)
+            {
+                direction.Y = -1;
+            }
+
+            return direction;
+        }
+
+        private Vector2 LowestNumberDirection(List<Tile> neighbors, Tile currentTile)
+        {
+            float xDirection = 0, yDirection = 0;
+            List<Tile> temp = new();
+            Tile temp2 = null;
+            Vector2 combinedDirection = Vector2.Zero;
+
+            for (int i = 0; i < neighbors.Count; i++)
+            {
+                if (!neighbors[i].IsSolid)
+                {
+                    if (temp2 != null)
+                    {
+                        if (neighbors[i].distanceFromTarget < temp2.distanceFromTarget)
+                        {
+                            temp2 = neighbors[i];
+                        }
+                    }
+                    else
+                    {
+                        temp2 = neighbors[i];
+                    }
+
+                    //if (temp.Count == 0)
+                    //{
+                    //    temp.Add(neighbors[i]);
+                    //}
+                    //else
+                    //{
+                    //    bool lowerNumberDetected = false;
+
+                    //    for (int y = 0; y < temp.Count; y++)
+                    //    {
+                    //        if (temp[y].distanceFromTarget > neighbors[i].distanceFromTarget)
+                    //        {
+                    //            temp.Clear();
+                    //            temp.Add(neighbors[i]);
+                    //            lowerNumberDetected = true;
+                    //        }
+                    //    }
+
+                    //    if (!lowerNumberDetected)
+                    //    {
+                    //        temp.Add(neighbors[i]);
+                    //    }
+                    //}
+                }
+            }
+
+            //if (temp.Count > 1)
+            //{
+            //    combinedDirection = CombinedVectorDirection(temp, currentTile);
+            //}
+            //else if (temp.Count == 1)
+            //{
+            //    if (temp.First().Position.X > currentTile.Position.X)
+            //    {
+            //        xDirection = 1;
+            //    }
+            //    else if (temp.First().Position.X < currentTile.Position.X)
+            //    {
+            //        xDirection = -1;
+            //    }
+            //    else
+            //    {
+            //        xDirection = 0;
+            //    }
+
+            //    if (temp.First().Position.Y > currentTile.Position.Y)
+            //    {
+            //        yDirection = 1;
+            //    }
+            //    else if (temp.First().Position.Y < currentTile.Position.Y)
+            //    {
+            //        yDirection = -1;
+            //    }
+            //    else
+            //    {
+            //        yDirection = 0;
+            //    }
+            //}
+
+            if (temp2.Position.X > currentTile.Position.X)
+            {
+                xDirection = 1;
+            }
+            else if (temp2.Position.X < currentTile.Position.X)
+            {
+                xDirection = -1;
+            }
+            else
+            {
+                xDirection = 0;
+            }
+
+            if (temp2.Position.Y > currentTile.Position.Y)
+            {
+                yDirection = 1;
+            }
+            else if (temp2.Position.Y < currentTile.Position.Y)
+            {
+                yDirection = -1;
+            }
+            else
+            {
+                yDirection = 0;
+            }
+
+            if (temp2 == target)
+            {
+                xDirection = 0;
+                yDirection = 0;
+            }
+
+            return new Vector2(xDirection, yDirection);
+
+            //if (combinedDirection != Vector2.Zero)
+            //{
+            //    return combinedDirection;
+            //}
+            //else
+            //{
+            //    return new Vector2(xDirection, yDirection);
+            //}
         }
     }
 }

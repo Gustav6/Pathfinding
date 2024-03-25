@@ -13,29 +13,46 @@ namespace TestProject
     public class Player : Moveable, ICollidable
     {
         public Rectangle hitbox;
-
         public Rectangle tileHitbox;
 
         public Player(Vector2 startingPosition)
         {
             Texture = TextureManager.Textures[TestProject.Texture.playerTexture];
+            Start();
+
+            Library.TileMap.OnEnterTile += Player_EnteredNewTile;
+
             MovementSpeed = 500;
             Position = startingPosition;
             Color = Color.White;
-            hitbox = new Rectangle((int)Position.X, (int)Position.Y, Texture.Width, Texture.Height);
-            tileHitbox = new Rectangle((int)Position.X + Texture.Width / 2, (int)Position.Y + Texture.Height / 2, 1, 1);
+            hitbox = new Rectangle((int)Position.X - (int)origin.X, (int)Position.Y - (int)origin.Y, Texture.Width, Texture.Height);
+            tileHitbox = new Rectangle((int)Position.X, (int)Position.Y, 12, 12);
+            SetStartingValues(Vector2.One, 0);
         }
+
+        private void Player_EnteredNewTile(object sender, OnEnterEventArgs e)
+        {
+            if (e.entered == this)
+            {
+                Library.fieldPathfinding.target = e.tile;
+            }
+        }
+
+        public override void Start()
+        {
+            base.Start();
+        }
+
 
         public override void Update(GameTime gameTime)
         {
             Control();
 
-            Move(gameTime);
-
             if (direction != Vector2.Zero)
             {
-                hitbox.Location = Position.ToPoint();
-                tileHitbox.Location = new Vector2(Position.X + Texture.Width / 2, Position.Y + Texture.Height / 2).ToPoint();
+                Move(gameTime);
+                hitbox.Location = new Vector2(Position.X - origin.X, Position.Y - origin.Y).ToPoint();
+                tileHitbox.Location = new Vector2(Position.X - tileHitbox.Width / 2, Position.Y - tileHitbox.Height / 2).ToPoint();
             }
 
             base.Update(gameTime);
@@ -79,7 +96,7 @@ namespace TestProject
         {
             base.Draw(spriteBatch);
 
-            //Library.DrawHitbox(spriteBatch, hitbox.Location.ToVector2());
+            Library.DrawHitbox(spriteBatch, new Vector2(tileHitbox.Width, tileHitbox.Height), tileHitbox.Location.ToVector2(), Color.Black, 1);
         }
     }
 }

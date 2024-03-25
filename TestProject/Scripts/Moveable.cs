@@ -9,7 +9,7 @@ namespace TestProject
 {
     public abstract class Moveable : GameObject
     {
-        protected Vector2 direction;
+        public Vector2 direction;
         protected float MovementSpeed { get; set; }
 
         public void Move(GameTime gameTime)

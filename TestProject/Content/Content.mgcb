@@ -13,7 +13,7 @@
 
 #---------------------------------- Content ---------------------------------#
 
-#begin 800px-U+2192.svg.png
+#begin 59209.png
 /importer:TextureImporter
 /processor:TextureProcessor
 /processorParam:ColorKeyColor=255,0,255,255
@@ -23,7 +23,7 @@
 /processorParam:ResizeToPowerOfTwo=False
 /processorParam:MakeSquare=False
 /processorParam:TextureFormat=Color
-/build:800px-U+2192.svg.png;arrow
+/build:59209.png;arrow.png
 
 #begin File.spritefont
 /importer:FontDescriptionImporter

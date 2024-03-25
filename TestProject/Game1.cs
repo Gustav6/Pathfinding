@@ -7,14 +7,13 @@ namespace TestProject
 {
     public class Game1 : Game
     {
-        private GraphicsDeviceManager graphics;
         private SpriteBatch spriteBatch;
 
         public Game1()
         {
-            graphics = new GraphicsDeviceManager(this);
-            graphics.PreferredBackBufferWidth = 1920;
-            graphics.PreferredBackBufferHeight = 1080;
+            Library.graphics = new GraphicsDeviceManager(this);
+            Library.graphics.PreferredBackBufferWidth = 1920;
+            Library.graphics.PreferredBackBufferHeight = 1080;
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
         }
@@ -32,7 +31,7 @@ namespace TestProject
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            GameManager.Instance.LoadContent(Content, GraphicsDevice);
+            GameManager.Instance.LoadContent(Content);
         }
 
         protected override void Update(GameTime gameTime)
@@ -54,6 +53,8 @@ namespace TestProject
             spriteBatch.Begin();
 
             GameManager.Instance.Draw(spriteBatch);
+
+            spriteBatch.DrawString(TextureManager.Font, (Library.gameObjects.Count - 1).ToString(), new Vector2(1820, 1000), Color.Red);
 
             spriteBatch.End();
 

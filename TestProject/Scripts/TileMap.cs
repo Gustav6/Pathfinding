@@ -8,20 +8,38 @@ using System.Threading.Tasks;
 
 namespace TestProject
 {
+    public class OnEnterEventArgs : EventArgs
+    {
+        public Tile tile;
+        public GameObject entered;
+    }
+
     public class TileMap
     {
-        private Tile[,] currentTileMap = new Tile[0, 0];
-        public List<Tile> tiles = new();
+        private Tile[,] currentMap;
+        public List<Tile> AllTiles { get; private set; }
+        public List<Tile> NotSolidTiles { get; private set; }
+
+        public event EventHandler<OnEnterEventArgs> OnEnterTile;
 
         public TileMap(int[,] map)
         {
+            currentMap = new Tile[0, 0];
+            AllTiles = new List<Tile>();
+            NotSolidTiles = new List<Tile>();
+
             CreateTileMap(map);
-            SetNeighbors(currentTileMap);
+            SetNeighbors(currentMap);
+        }
+
+        public void OnEnter(OnEnterEventArgs e)
+        {
+            OnEnterTile?.Invoke(this, e);
         }
 
         private void CreateTileMap(int[,] map)
         {
-            currentTileMap = new Tile[map.GetLength(0), map.GetLength(1)];
+            currentMap = new Tile[map.GetLength(0), map.GetLength(1)];
 
             for (int y = 0; y < map.GetLength(1); y++)
             {
@@ -34,13 +52,19 @@ namespace TestProject
 
                     Tile temp = new(new Vector2(positionX, positionY), tileTexture);
 
-                    currentTileMap[x, y] = temp;
-                    tiles.Add(temp);
+                    currentMap[x, y] = temp;
+
+                    if (tileTexture != TextureManager.TileTextures[TileTexture.solid])
+                    {
+                        NotSolidTiles.Add(temp);
+                    }
+
+                    AllTiles.Add(temp);
                 }
             }
         }
 
-        public void SetNeighbors(Tile[,] tileMap)
+        private void SetNeighbors(Tile[,] tileMap)
         {
             for (int x = 0; x < tileMap.GetLength(0); x++)
             {
@@ -104,11 +128,11 @@ namespace TestProject
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            for (int x = 0; x < currentTileMap.GetLength(0); x++)
+            for (int x = 0; x < currentMap.GetLength(0); x++)
             {
-                for (int y = 0; y < currentTileMap.GetLength(1); y++)
+                for (int y = 0; y < currentMap.GetLength(1); y++)
                 {
-                    currentTileMap[x, y].Draw(spriteBatch);
+                    currentMap[x, y].Draw(spriteBatch);
                 }
             }
         }

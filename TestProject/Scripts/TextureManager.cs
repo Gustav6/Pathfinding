@@ -18,7 +18,7 @@ namespace TestProject
         public static Dictionary<Texture, Texture2D> Textures { get; private set; }
         public static Dictionary<TileTexture, Texture2D> TileTextures { get; private set; }
 
-        public void LoadTextures(ContentManager content, GraphicsDevice graphics)
+        public void LoadTextures(ContentManager content)
         {
             #region Initialize dictionaries
             Textures = new();
@@ -29,14 +29,14 @@ namespace TestProject
             //Textures.TryAdd(Texture.playerTexture, content.Load<Texture2D>(""));
             //Textures.TryAdd(Texture.enemyTexture, content.Load<Texture2D>(""));
             Textures.TryAdd(Texture.arrowTexture, content.Load<Texture2D>("arrow"));
-            Textures.TryAdd(Texture.playerTexture, Library.CreateTexture(graphics, tileWidth, tileHeight * 2, pixel => Color.DarkGreen));
-            Textures.TryAdd(Texture.enemyTexture, Library.CreateTexture(graphics, tileWidth, tileHeight, pixel => Color.Red));
-            Textures.TryAdd(Texture.hitboxTexture, Library.CreateTexture(graphics, tileWidth, tileHeight, pixel => Color.Green));
+            Textures.TryAdd(Texture.playerTexture, Library.CreateTexture(tileWidth, tileHeight, pixel => Color.DarkGreen));
+            Textures.TryAdd(Texture.enemyTexture, Library.CreateTexture(tileWidth, tileHeight, pixel => Color.Red));
+            Textures.TryAdd(Texture.hitboxTexture, Library.CreateTexture(tileWidth, tileHeight, pixel => Color.Green));
             #endregion
 
             #region Tile textures
-            TileTextures.TryAdd(TileTexture.solid, Library.CreateTexture(graphics, tileWidth, tileHeight, pixel => Color.Black));
-            TileTextures.TryAdd(TileTexture.empty, Library.CreateTexture(graphics, tileWidth, tileHeight, pixel => Color.White));
+            TileTextures.TryAdd(TileTexture.solid, Library.CreateTexture(tileWidth, tileHeight, pixel => Color.Black));
+            TileTextures.TryAdd(TileTexture.empty, Library.CreateTexture(tileWidth, tileHeight, pixel => Color.White));
             #endregion
 
             Font = content.Load<SpriteFont>("spritefont");
