@@ -90,39 +90,85 @@ namespace TestProject
                     {
                         if (tempDirection.X != 0)
                         {
-                            if (Position.X + 2 >= hasShortestPath.Position.X && Position.X - 2 <= hasShortestPath.Position.X)
-                            {
-                                if (CanMoveInDirection(desiredDirection, gameTime))
-                                {
-                                    canMoveTowardsDesired = true;
-                                    tempDirection = Vector2.Zero;
-                                }
+                            Vector2 nextPosition = Position + (tempDirection * movementSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds);
 
-                                Position = new Vector2(hasShortestPath.Position.X, Position.Y);
-                                direction = Vector2.Zero;
-                            }
-                            else
+                            if (tempDirection.X > 0)
                             {
-                                direction = tempDirection;
+                                if (Position.X >= hasShortestPath.Position.X || nextPosition.X >= hasShortestPath.Position.X)
+                                {
+                                    Position = new Vector2(hasShortestPath.Position.X, Position.Y);
+                                    direction = Vector2.Zero;
+
+                                    if (CanMoveInDirection(desiredDirection, gameTime))
+                                    {
+                                        canMoveTowardsDesired = true;
+                                        tempDirection = Vector2.Zero;
+                                    }
+                                }
+                                else
+                                {
+                                    direction = tempDirection;
+                                }
+                            }
+                            else if (tempDirection.X < 0)
+                            {
+                                if (Position.X <= hasShortestPath.Position.X || nextPosition.X <= hasShortestPath.Position.X)
+                                {
+                                    Position = new Vector2(hasShortestPath.Position.X, Position.Y);
+                                    direction = Vector2.Zero;
+
+                                    if (CanMoveInDirection(desiredDirection, gameTime))
+                                    {
+                                        canMoveTowardsDesired = true;
+                                        tempDirection = Vector2.Zero;
+                                    }
+                                }
+                                else
+                                {
+                                    direction = tempDirection;
+                                }
                             }
                         }
 
                         if (tempDirection.Y != 0)
                         {
-                            if (Position.Y + 2 >= hasShortestPath.Position.Y && Position.Y - 2 <= hasShortestPath.Position.Y)
-                            {
-                                if (CanMoveInDirection(desiredDirection, gameTime))
-                                {
-                                    canMoveTowardsDesired = true;
-                                    tempDirection = Vector2.Zero;
-                                }
+                            Vector2 nextPosition = Position + (tempDirection * movementSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds);
 
-                                Position = new Vector2(Position.X, hasShortestPath.Position.Y);
-                                direction = Vector2.Zero;
-                            }
-                            else
+                            if (tempDirection.Y > 0)
                             {
-                                direction = tempDirection;
+                                if (Position.Y >= hasShortestPath.Position.Y || nextPosition.Y >= hasShortestPath.Position.Y)
+                                {
+                                    Position = new Vector2(Position.X, hasShortestPath.Position.Y);
+                                    direction = Vector2.Zero;
+
+                                    if (CanMoveInDirection(desiredDirection, gameTime))
+                                    {
+                                        canMoveTowardsDesired = true;
+                                        tempDirection = Vector2.Zero;
+                                    }
+                                }
+                                else
+                                {
+                                    direction = tempDirection;
+                                }
+                            }
+                            else if (tempDirection.Y < 0)
+                            {
+                                if (Position.Y <= hasShortestPath.Position.Y || nextPosition.Y <= hasShortestPath.Position.Y)
+                                {
+                                    Position = new Vector2(Position.X, hasShortestPath.Position.Y);
+                                    direction = Vector2.Zero;
+
+                                    if (CanMoveInDirection(desiredDirection, gameTime))
+                                    {
+                                        canMoveTowardsDesired = true;
+                                        tempDirection = Vector2.Zero;
+                                    }
+                                }
+                                else
+                                {
+                                    direction = tempDirection;
+                                }
                             }
                         }
                     }
