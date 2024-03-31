@@ -19,6 +19,7 @@ namespace TestProject
         private Tile[,] currentMap;
         public List<Tile> AllTiles { get; private set; }
         public List<Tile> NotSolidTiles { get; private set; }
+        public List<Tile> SolidTiles { get; private set; }
 
         public event EventHandler<OnEnterEventArgs> OnEnterTile;
 
@@ -26,6 +27,7 @@ namespace TestProject
         {
             currentMap = new Tile[0, 0];
             AllTiles = new List<Tile>();
+            SolidTiles = new List<Tile>();
             NotSolidTiles = new List<Tile>();
 
             CreateTileMap(map);
@@ -58,6 +60,10 @@ namespace TestProject
                     {
                         NotSolidTiles.Add(temp);
                     }
+                    else
+                    {
+                        SolidTiles.Add(temp);
+                    }
 
                     AllTiles.Add(temp);
                 }
@@ -78,21 +84,45 @@ namespace TestProject
                     if (x + 1 < tileMap.GetLength(0))
                     {
                         Tile temp = tileMap[x + 1, y];
+
+                        if (temp.IsSolid)
+                        {
+                            tileMap[x, y].hasSolidNeighbor = true;
+                        }
+
                         adjacentNeighborTiles.Add(temp);
                     }
                     if (x - 1 >= 0)
                     {
                         Tile temp = tileMap[x - 1, y];
+
+                        if (temp.IsSolid)
+                        {
+                            tileMap[x, y].hasSolidNeighbor = true;
+                        }
+
                         adjacentNeighborTiles.Add(temp);
                     }
                     if (y + 1 < tileMap.GetLength(1))
                     {
                         Tile temp = tileMap[x, y + 1];
+
+                        if (temp.IsSolid)
+                        {
+                            tileMap[x, y].hasSolidNeighbor = true;
+                        }
+
                         adjacentNeighborTiles.Add(temp);
                     }
                     if (y - 1 >= 0)
                     {
                         Tile temp = tileMap[x, y - 1];
+
+                        if (temp.IsSolid)
+                        {
+                            tileMap[x, y].hasSolidNeighbor = true;
+                        }
+
                         adjacentNeighborTiles.Add(temp);
                     }
                     #endregion
@@ -101,21 +131,45 @@ namespace TestProject
                     if (x + 1 < tileMap.GetLength(0) && y + 1 < tileMap.GetLength(1))
                     {
                         Tile temp = tileMap[x + 1, y + 1];
+
+                        if (temp.IsSolid)
+                        {
+                            tileMap[x, y].hasSolidNeighbor = true;
+                        }
+
                         verticalNeighborTiles.Add(temp);
                     }
                     if (x - 1 >= 0 && y + 1 < tileMap.GetLength(1))
                     {
                         Tile temp = tileMap[x - 1, y + 1];
+
+                        if (temp.IsSolid)
+                        {
+                            tileMap[x, y].hasSolidNeighbor = true;
+                        }
+
                         verticalNeighborTiles.Add(temp);
                     }
                     if (x - 1 >= 0 && y - 1 >= 0)
                     {
                         Tile temp = tileMap[x - 1, y - 1];
+
+                        if (temp.IsSolid)
+                        {
+                            tileMap[x, y].hasSolidNeighbor = true;
+                        }
+
                         verticalNeighborTiles.Add(temp);
                     }
                     if (x + 1 < tileMap.GetLength(0) && y - 1 >= 0)
                     {
                         Tile temp = tileMap[x + 1, y - 1];
+
+                        if (temp.IsSolid)
+                        {
+                            tileMap[x, y].hasSolidNeighbor = true;
+                        }
+
                         verticalNeighborTiles.Add(temp);
                     }
                     #endregion

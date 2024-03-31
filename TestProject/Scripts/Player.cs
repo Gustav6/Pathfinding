@@ -22,11 +22,11 @@ namespace TestProject
 
             Library.TileMap.OnEnterTile += Player_EnteredNewTile;
 
-            MovementSpeed = 500;
+            movementSpeed = 500;
             Position = startingPosition;
             Color = Color.White;
             hitbox = new Rectangle((int)Position.X - (int)origin.X, (int)Position.Y - (int)origin.Y, Texture.Width, Texture.Height);
-            tileHitbox = new Rectangle((int)Position.X, (int)Position.Y, 12, 12);
+            tileHitbox = new Rectangle((int)Position.X, (int)Position.Y, 1, 1);
             SetStartingValues(Vector2.One, 0);
         }
 

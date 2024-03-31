@@ -24,16 +24,17 @@ namespace TestProject
         public Vector2 direction;
         public List<Tile> AdjacentNeighbors { get; set; }
         public List<Tile> VerticalNeighbors { get; set; }
+        public bool hasSolidNeighbor;
 
         public Tile(Vector2 _position, Texture2D tileTexture)
         {
             texture = tileTexture;
             Position = _position;
             origin = new Vector2(texture.Width / 2, texture.Height / 2);
+            hitbox = new Rectangle((int)Position.X - (int)origin.X, (int)Position.Y - (int)origin.Y, tileTexture.Width, tileTexture.Height);
 
             if (tileTexture != TextureManager.TileTextures[TileTexture.solid])
             {
-                hitbox = new Rectangle((int)Position.X - (int)origin.X, (int)Position.Y - (int)origin.Y, tileTexture.Width, tileTexture.Height);
                 IsSolid = false;
             }
             else
@@ -44,21 +45,30 @@ namespace TestProject
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            spriteBatch.Draw(texture, Position, null, color, 0, origin, 1, SpriteEffects.None, 0);
+            if (direction != Vector2.Zero && !Library.showArrows1)
+            {
+                spriteBatch.Draw(texture, Position, null, color, 0, origin, 1, SpriteEffects.None, 0);
+            }
+            else if (direction == Vector2.Zero && IsSolid)
+            {
+                spriteBatch.Draw(texture, Position, null, color, 0, origin, 1, SpriteEffects.None, 0);
+            }
 
             if (!IsSolid)
             {
                 if (Library.showArrows1)
                 {
-                    spriteBatch.DrawString(TextureManager.Font, direction.Y.ToString(), new Vector2(Position.X, Position.Y - 16), Color.Red);
+                    if (!hasSolidNeighbor)
+                    {
+                        spriteBatch.Draw(texture, Position, null, color, 0, origin, 1, SpriteEffects.None, 0);
+                    }
                 }
                 else if (Library.showArrows2)
                 {
-                    spriteBatch.DrawString(TextureManager.Font, direction.X.ToString(), new Vector2(Position.X, Position.Y - 16), Color.Red);
                 }
                 else if (Library.showDistance)
                 {
-                    spriteBatch.DrawString(TextureManager.Font, distanceFromTarget.ToString(), new Vector2(Position.X - 10, Position.Y - 16), Color.Green);
+                    spriteBatch.DrawString(TextureManager.Font, distanceFromTarget.ToString(), new Vector2(Position.X - 12, Position.Y - 16), Color.Green);
                 }
             }
         }

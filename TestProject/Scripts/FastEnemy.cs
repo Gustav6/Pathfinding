@@ -16,12 +16,14 @@ namespace TestProject.Scripts
             Texture = TextureManager.Textures[TestProject.Texture.enemyTexture];
             Start();
 
+            hitboxSizeMultiplier = 0.8f;
             Position = spawnLocation;
-            MovementSpeed = 150;
-            tileHitbox = new Rectangle((int)Position.X, (int)Position.Y, 10, 10);
-            hitbox = new Rectangle((int)Position.X - (int)origin.X, (int)Position.Y - (int)origin.Y, Texture.Width, Texture.Height);
+            movementSpeed = 150;
+            hitbox = new Rectangle((int)Position.X, (int)Position.Y, (int)(Texture.Width * hitboxSizeMultiplier), (int)(Texture.Height * hitboxSizeMultiplier));
             Color = Color.White;
             SetStartingValues(Vector2.One, 0);
+
+            GetIntersectingTile();
         }
 
         public override void Start()

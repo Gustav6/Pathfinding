@@ -11,27 +11,28 @@ namespace TestProject
 
         public Game1()
         {
-            Library.graphics = new GraphicsDeviceManager(this);
-            Library.graphics.PreferredBackBufferWidth = 1920;
-            Library.graphics.PreferredBackBufferHeight = 1080;
+            Library.graphics = new GraphicsDeviceManager(this)
+            {
+                PreferredBackBufferWidth = 1920,
+                PreferredBackBufferHeight = 1080
+            };
+
             Content.RootDirectory = "Content";
             IsMouseVisible = true;
         }
 
         protected override void Initialize()
         {
-            GameManager.Instance = new GameManager();
-
             base.Initialize();
 
-            GameManager.Instance.Initialize();
+            GameManager.Initialize();
         }
 
         protected override void LoadContent()
         {
             spriteBatch = new SpriteBatch(GraphicsDevice);
 
-            GameManager.Instance.LoadContent(Content);
+            GameManager.LoadContent(Content);
         }
 
         protected override void Update(GameTime gameTime)
@@ -39,7 +40,7 @@ namespace TestProject
             if (GamePad.GetState(PlayerIndex.One).Buttons.Back == ButtonState.Pressed || Keyboard.GetState().IsKeyDown(Keys.Escape))
                 Exit();
 
-            GameManager.Instance.Update(gameTime);
+            GameManager.Update(gameTime);
 
             //SetTile();
 
@@ -52,9 +53,9 @@ namespace TestProject
 
             spriteBatch.Begin();
 
-            GameManager.Instance.Draw(spriteBatch);
+            GameManager.Draw(spriteBatch);
 
-            spriteBatch.DrawString(TextureManager.Font, (Library.gameObjects.Count - 1).ToString(), new Vector2(1820, 1000), Color.Red);
+            spriteBatch.DrawString(TextureManager.Font, "Amount of enemies: " + (Library.gameObjects.Count - 1).ToString(), new Vector2(1500, 1000), Color.Red);
 
             spriteBatch.End();
 

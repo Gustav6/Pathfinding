@@ -13,11 +13,9 @@ namespace TestProject
 {
     public class GameManager
     {
-        public static GameManager Instance { get; set; }
+        private static TextureManager textureManager;
 
-        private TextureManager textureManager;
-
-        public void Initialize()
+        public static void Initialize()
         {
             Library.TileMap = new TileMap(new int[,]
             {
@@ -69,39 +67,33 @@ namespace TestProject
             Library.gameObjects.Add(Library.PlayerInstance);
         }
 
-        public void LoadContent(ContentManager content)
+        public static void LoadContent(ContentManager content)
         {
             textureManager = new TextureManager();
 
             textureManager.LoadTextures(content);
         }
 
-        public void Update(GameTime gameTime)
+        public static void Update(GameTime gameTime)
         {
             Input.GetInput();
 
-            Library.fieldPathfinding.CreatePathfindingField();
-
-            for (int i = 0; i < Library.TileMap.NotSolidTiles.Count; i++)
+            if (Library.PlayerInstance != null)
             {
-                for (int y = 0; y < Library.gameObjects.Count; y++)
+                if (Library.fieldPathfinding.target != null)
                 {
-                    Tile temp = Library.TileMap.NotSolidTiles[i];
+                    if (!Library.PlayerInstance.hitbox.Intersects(Library.fieldPathfinding.target.hitbox))
+                    {
+                        Library.fieldPathfinding.UpdateTarget();
 
-                    if (Library.gameObjects[y] is Player p)
-                    {
-                        if (Library.fieldPathfinding.target != temp && p.tileHitbox.Intersects(temp.hitbox))
-                        {
-                            Library.TileMap.OnEnter(new OnEnterEventArgs { entered = p, tile = temp } );
-                        }
+                        Library.fieldPathfinding.CreatePathfindingField();
                     }
-                    else if (Library.gameObjects[y] is Enemy e)
-                    {
-                        if (e.direction != temp.direction && e.tileHitbox.Intersects(temp.hitbox))
-                        {
-                            Library.TileMap.OnEnter(new OnEnterEventArgs { entered = e, tile = temp });
-                        }
-                    }
+                }
+                else
+                {
+                    Library.fieldPathfinding.UpdateTarget();
+
+                    Library.fieldPathfinding.CreatePathfindingField();
                 }
             }
 
@@ -122,8 +114,16 @@ namespace TestProject
 
             if (Input.MouseIsPressed(Input.currentMS.LeftButton))
             {
-                Library.gameObjects.Add(new FastEnemy(Input.currentMS.Position.ToVector2()));
+                for (int i = 0; i < 10; i++)
+                {
+                    Library.gameObjects.Add(new FastEnemy(Input.currentMS.Position.ToVector2()));
+                }
             }
+
+            //if (Input.MouseHasBeenPressed(Input.currentMS.LeftButton, Input.prevMS.LeftButton))
+            //{
+            //    Library.gameObjects.Add(new FastEnemy(Input.currentMS.Position.ToVector2()));
+            //}
 
             if (Input.MouseHasBeenPressed(Input.currentMS.RightButton, Input.prevMS.RightButton))
             {
@@ -182,7 +182,7 @@ namespace TestProject
             #endregion
         }
 
-        public void Draw(SpriteBatch spriteBatch)
+        public static void Draw(SpriteBatch spriteBatch)
         {
             Library.TileMap.Draw(spriteBatch);
 

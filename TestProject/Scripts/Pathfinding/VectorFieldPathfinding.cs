@@ -12,9 +12,23 @@ namespace TestProject
     public class VectorFieldPathfinding
     {
         public Tile target;
+        public List<Tile> targetTiles = new();
         private Tile previousTarget;
         public readonly float distanceFromTarget;
 
+        public void UpdateTarget()
+        {
+            for (int i = 0; i < Library.TileMap.NotSolidTiles.Count; i++)
+            {
+                Tile tile = Library.TileMap.NotSolidTiles[i];
+
+                if (Library.PlayerInstance.tileHitbox.Intersects(tile.hitbox))
+                {
+                    target = tile;
+                    break;
+                }
+            }
+        }
 
         public void CreatePathfindingField()
         {
@@ -106,14 +120,16 @@ namespace TestProject
             {
                 if (tile != target)
                 {
-                    List<Tile> neighbors = new();
-                    List<Tile> adjacentNeighbors = new();
+                    //List<Tile> neighbors = new();
+                    //List<Tile> adjacentNeighbors = new();
+                    //List<Tile> verticalNeighbors = new();
 
-                    neighbors.AddRange(tile.VerticalNeighbors);
-                    neighbors.AddRange(tile.AdjacentNeighbors);
-                    adjacentNeighbors.AddRange(tile.AdjacentNeighbors);
-
-                    tile.direction = LowestNumberDirection(neighbors, tile);
+                    //neighbors.AddRange(tile.VerticalNeighbors);
+                    //neighbors.AddRange(tile.AdjacentNeighbors);
+                    //adjacentNeighbors.AddRange(tile.AdjacentNeighbors);
+                    //verticalNeighbors.AddRange(tile.VerticalNeighbors);
+                    
+                    tile.direction = LowestNumberDirection(tile);
                 }
             }
         }
@@ -121,6 +137,11 @@ namespace TestProject
         private Vector2 CombinedVectorDirection(List<Tile> neighbors, Tile currentTile)
         {
             Vector2 direction = Vector2.Zero;
+
+            if (neighbors.Contains(target))
+            {
+                return Vector2.Zero;
+            }
 
             for (int i = 0; i < neighbors.Count; i++)
             {
@@ -188,130 +209,64 @@ namespace TestProject
             return direction;
         }
 
-        private Vector2 LowestNumberDirection(List<Tile> neighbors, Tile currentTile)
+        private Vector2 LowestNumberDirection(Tile currentTile)
         {
             float xDirection = 0, yDirection = 0;
-            List<Tile> temp = new();
-            Tile temp2 = null;
-            Vector2 combinedDirection = Vector2.Zero;
+            List<Tile> neighbors = currentTile.AdjacentNeighbors;
+
+            if (!currentTile.hasSolidNeighbor || currentTile.VerticalNeighbors.Contains(target))
+            {
+                neighbors.AddRange(currentTile.VerticalNeighbors);
+            }
+
+            Tile temp = null;
 
             for (int i = 0; i < neighbors.Count; i++)
             {
                 if (!neighbors[i].IsSolid)
                 {
-                    if (temp2 != null)
+                    if (temp != null)
                     {
-                        if (neighbors[i].distanceFromTarget < temp2.distanceFromTarget)
+                        if (neighbors[i].distanceFromTarget < temp.distanceFromTarget)
                         {
-                            temp2 = neighbors[i];
+                            temp = neighbors[i];
                         }
                     }
                     else
                     {
-                        temp2 = neighbors[i];
+                        temp = neighbors[i];
                     }
-
-                    //if (temp.Count == 0)
-                    //{
-                    //    temp.Add(neighbors[i]);
-                    //}
-                    //else
-                    //{
-                    //    bool lowerNumberDetected = false;
-
-                    //    for (int y = 0; y < temp.Count; y++)
-                    //    {
-                    //        if (temp[y].distanceFromTarget > neighbors[i].distanceFromTarget)
-                    //        {
-                    //            temp.Clear();
-                    //            temp.Add(neighbors[i]);
-                    //            lowerNumberDetected = true;
-                    //        }
-                    //    }
-
-                    //    if (!lowerNumberDetected)
-                    //    {
-                    //        temp.Add(neighbors[i]);
-                    //    }
-                    //}
                 }
             }
 
-            //if (temp.Count > 1)
-            //{
-            //    combinedDirection = CombinedVectorDirection(temp, currentTile);
-            //}
-            //else if (temp.Count == 1)
-            //{
-            //    if (temp.First().Position.X > currentTile.Position.X)
-            //    {
-            //        xDirection = 1;
-            //    }
-            //    else if (temp.First().Position.X < currentTile.Position.X)
-            //    {
-            //        xDirection = -1;
-            //    }
-            //    else
-            //    {
-            //        xDirection = 0;
-            //    }
+            if (temp != null)
+            {
+                if (temp.Position.X > currentTile.Position.X)
+                {
+                    xDirection = 1;
+                }
+                else if (temp.Position.X < currentTile.Position.X)
+                {
+                    xDirection = -1;
+                }
 
-            //    if (temp.First().Position.Y > currentTile.Position.Y)
-            //    {
-            //        yDirection = 1;
-            //    }
-            //    else if (temp.First().Position.Y < currentTile.Position.Y)
-            //    {
-            //        yDirection = -1;
-            //    }
-            //    else
-            //    {
-            //        yDirection = 0;
-            //    }
-            //}
-
-            if (temp2.Position.X > currentTile.Position.X)
-            {
-                xDirection = 1;
-            }
-            else if (temp2.Position.X < currentTile.Position.X)
-            {
-                xDirection = -1;
-            }
-            else
-            {
-                xDirection = 0;
+                if (temp.Position.Y > currentTile.Position.Y)
+                {
+                    yDirection = 1;
+                }
+                else if (temp.Position.Y < currentTile.Position.Y)
+                {
+                    yDirection = -1;
+                }
             }
 
-            if (temp2.Position.Y > currentTile.Position.Y)
-            {
-                yDirection = 1;
-            }
-            else if (temp2.Position.Y < currentTile.Position.Y)
-            {
-                yDirection = -1;
-            }
-            else
-            {
-                yDirection = 0;
-            }
-
-            if (temp2 == target)
+            if (temp == target)
             {
                 xDirection = 0;
                 yDirection = 0;
             }
 
             return new Vector2(xDirection, yDirection);
-
-            //if (combinedDirection != Vector2.Zero)
-            //{
-            //    return combinedDirection;
-            //}
-            //else
-            //{
-            //    return new Vector2(xDirection, yDirection);
-            //}
         }
     }
 }

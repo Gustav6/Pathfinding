@@ -10,7 +10,7 @@ namespace TestProject
     public abstract class Moveable : GameObject
     {
         public Vector2 direction;
-        protected float MovementSpeed { get; set; }
+        protected float movementSpeed;
 
         public void Move(GameTime gameTime)
         {
@@ -18,7 +18,7 @@ namespace TestProject
             {
                 direction.Normalize();
 
-                Position += direction * MovementSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
+                Position += direction * movementSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds;
             }
         }
     }
