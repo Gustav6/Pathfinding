@@ -18,7 +18,7 @@ namespace TestProject.Scripts
 
             hitboxSizeMultiplier = 0.8f;
             Position = spawnLocation;
-            movementSpeed = 150;
+            movementSpeed = 125;
             hitbox = new Rectangle((int)Position.X, (int)Position.Y, (int)(Texture.Width * hitboxSizeMultiplier), (int)(Texture.Height * hitboxSizeMultiplier));
             Color = Color.White;
             SetStartingValues(Vector2.One, 0);

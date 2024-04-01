@@ -92,41 +92,20 @@ namespace TestProject
                         {
                             Vector2 nextPosition = Position + (tempDirection * movementSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds);
 
-                            if (tempDirection.X > 0)
+                            if (tempDirection.X < 0 && nextPosition.X >= hasShortestPath.Position.X || tempDirection.X > 0 && nextPosition.X <= hasShortestPath.Position.X)
                             {
-                                if (Position.X >= hasShortestPath.Position.X || nextPosition.X >= hasShortestPath.Position.X)
-                                {
-                                    Position = new Vector2(hasShortestPath.Position.X, Position.Y);
-                                    direction = Vector2.Zero;
+                                Position = new Vector2(hasShortestPath.Position.X, Position.Y);
+                                direction = Vector2.Zero;
 
-                                    if (CanMoveInDirection(desiredDirection, gameTime))
-                                    {
-                                        canMoveTowardsDesired = true;
-                                        tempDirection = Vector2.Zero;
-                                    }
-                                }
-                                else
+                                if (CanMoveInDirection(desiredDirection, gameTime))
                                 {
-                                    direction = tempDirection;
+                                    canMoveTowardsDesired = true;
+                                    tempDirection = Vector2.Zero;
                                 }
                             }
-                            else if (tempDirection.X < 0)
+                            else
                             {
-                                if (Position.X <= hasShortestPath.Position.X || nextPosition.X <= hasShortestPath.Position.X)
-                                {
-                                    Position = new Vector2(hasShortestPath.Position.X, Position.Y);
-                                    direction = Vector2.Zero;
-
-                                    if (CanMoveInDirection(desiredDirection, gameTime))
-                                    {
-                                        canMoveTowardsDesired = true;
-                                        tempDirection = Vector2.Zero;
-                                    }
-                                }
-                                else
-                                {
-                                    direction = tempDirection;
-                                }
+                                direction = tempDirection;
                             }
                         }
 
@@ -134,41 +113,20 @@ namespace TestProject
                         {
                             Vector2 nextPosition = Position + (tempDirection * movementSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds);
 
-                            if (tempDirection.Y > 0)
+                            if (tempDirection.Y > 0 && nextPosition.Y >= hasShortestPath.Position.Y || tempDirection.Y < 0 && nextPosition.Y <= hasShortestPath.Position.Y)
                             {
-                                if (Position.Y >= hasShortestPath.Position.Y || nextPosition.Y >= hasShortestPath.Position.Y)
-                                {
-                                    Position = new Vector2(Position.X, hasShortestPath.Position.Y);
-                                    direction = Vector2.Zero;
+                                Position = new Vector2(Position.X, hasShortestPath.Position.Y);
+                                direction = Vector2.Zero;
 
-                                    if (CanMoveInDirection(desiredDirection, gameTime))
-                                    {
-                                        canMoveTowardsDesired = true;
-                                        tempDirection = Vector2.Zero;
-                                    }
-                                }
-                                else
+                                if (CanMoveInDirection(desiredDirection, gameTime))
                                 {
-                                    direction = tempDirection;
+                                    canMoveTowardsDesired = true;
+                                    tempDirection = Vector2.Zero;
                                 }
                             }
-                            else if (tempDirection.Y < 0)
+                            else
                             {
-                                if (Position.Y <= hasShortestPath.Position.Y || nextPosition.Y <= hasShortestPath.Position.Y)
-                                {
-                                    Position = new Vector2(Position.X, hasShortestPath.Position.Y);
-                                    direction = Vector2.Zero;
-
-                                    if (CanMoveInDirection(desiredDirection, gameTime))
-                                    {
-                                        canMoveTowardsDesired = true;
-                                        tempDirection = Vector2.Zero;
-                                    }
-                                }
-                                else
-                                {
-                                    direction = tempDirection;
-                                }
+                                direction = tempDirection;
                             }
                         }
                     }
@@ -240,22 +198,23 @@ namespace TestProject
                     }
                 }
 
-                if (hasShortestPath.Position.X > Position.X)
-                {
-                    tempDirection = new Vector2(1, 0);
-                }
-                else if (hasShortestPath.Position.X < Position.X)
-                {
-                    tempDirection = new Vector2(-1, 0);
-                }
-
-                if (hasShortestPath.Position.Y > Position.Y)
+                // This is where bugs appear
+                if (hasShortestPath.Position.X > currentTile.Position.X)
                 {
                     tempDirection = new Vector2(0, 1);
                 }
-                else if (hasShortestPath.Position.Y < Position.Y)
+                else if (hasShortestPath.Position.X < currentTile.Position.X)
                 {
                     tempDirection = new Vector2(0, -1);
+                }
+
+                if (hasShortestPath.Position.Y > currentTile.Position.Y)
+                {
+                    tempDirection = new Vector2(1, 0);
+                }
+                else if (hasShortestPath.Position.Y < currentTile.Position.Y)
+                {
+                    tempDirection = new Vector2(-1, 0);
                 }
             }
         }
