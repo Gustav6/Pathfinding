@@ -79,7 +79,7 @@ namespace TestProject
                 {
                     canMoveTowardsDesired = false;
 
-                    MoveTowardsNewTile();
+                    MoveTowardsNewTile(gameTime);
                 }
             }
             else if (!canMoveTowardsDesired)
@@ -92,13 +92,14 @@ namespace TestProject
                         {
                             Vector2 nextPosition = Position + (tempDirection * movementSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds);
 
-                            if (tempDirection.X < 0 && nextPosition.X >= hasShortestPath.Position.X || tempDirection.X > 0 && nextPosition.X <= hasShortestPath.Position.X)
+                            if (tempDirection.X < 0 && nextPosition.X <= hasShortestPath.Position.X || tempDirection.X > 0 && nextPosition.X >= hasShortestPath.Position.X)
                             {
                                 Position = new Vector2(hasShortestPath.Position.X, Position.Y);
                                 direction = Vector2.Zero;
 
                                 if (CanMoveInDirection(desiredDirection, gameTime))
                                 {
+                                    hasShortestPath = null;
                                     canMoveTowardsDesired = true;
                                     tempDirection = Vector2.Zero;
                                 }
@@ -120,6 +121,7 @@ namespace TestProject
 
                                 if (CanMoveInDirection(desiredDirection, gameTime))
                                 {
+                                    hasShortestPath = null;
                                     canMoveTowardsDesired = true;
                                     tempDirection = Vector2.Zero;
                                 }
@@ -134,22 +136,36 @@ namespace TestProject
                     {
                         direction = Vector2.Zero;
 
-                        if (tempDirection.Y != 0)
-                        {
-                            Position = currentTile.Position;
-                        }
-
-                        if (tempDirection.X != 0)
-                        {
-                            Position = currentTile.Position;
-                        }
-
                         if (CanMoveInDirection(desiredDirection, gameTime))
                         {
                             canMoveTowardsDesired = true;
                             tempDirection = Vector2.Zero;
                         }
+                        else
+                        {
+                            Vector2 nextPosition = Position + (tempDirection * movementSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds);
+
+                            if (tempDirection.Y != 0)
+                            {
+                                if (nextPosition.Y != hasShortestPath.Position.Y)
+                                {
+                                    Position = new Vector2(Position.X, currentTile.Position.Y);
+                                }
+                            }
+                            else if (tempDirection.X != 0)
+                            {
+                                if (nextPosition.Y != hasShortestPath.Position.Y)
+                                {
+                                    Position = new Vector2(currentTile.Position.X, Position.Y);
+                                }
+                            }
+                        }
                     }
+                }
+
+                if (tempDirection == Vector2.Zero && !canMoveTowardsDesired)
+                {
+                    MoveTowardsNewTile(gameTime);
                 }
             }
         }
@@ -173,10 +189,12 @@ namespace TestProject
             return true;
         }
 
-        private void MoveTowardsNewTile()
+        private void MoveTowardsNewTile(GameTime gameTime)
         {
             if (currentTile != null)
             {
+                List<Tile> safety = new();
+
                 for (int i = 0; i < currentTile.AdjacentNeighbors.Count; i++)
                 {
                     if (hasShortestPath != null)
@@ -185,36 +203,149 @@ namespace TestProject
                         {
                             if (hasShortestPath.distanceFromTarget > currentTile.AdjacentNeighbors[i].distanceFromTarget)
                             {
+                                safety.Clear();
+                                safety.Add(currentTile.AdjacentNeighbors[i]);
                                 hasShortestPath = currentTile.AdjacentNeighbors[i];
                             }
+                            else if (hasShortestPath.distanceFromTarget == currentTile.AdjacentNeighbors[i].distanceFromTarget)
+                            {
+                                safety.Add(currentTile.AdjacentNeighbors[i]);
+                            }
                         }
+                        //currentTile.AdjacentNeighbors[i].color = Color.Blue;
                     }
                     else
                     {
                         if (!currentTile.AdjacentNeighbors[i].IsSolid)
                         {
                             hasShortestPath = currentTile.AdjacentNeighbors[i];
+                            safety.Add(currentTile.AdjacentNeighbors[i]);
+                            //currentTile.AdjacentNeighbors[i].color = Color.Blue;
                         }
                     }
                 }
 
-                // This is where bugs appear
-                if (hasShortestPath.Position.X > currentTile.Position.X)
+                if (safety.Count > 1)
                 {
-                    tempDirection = new Vector2(0, 1);
+                    for (int i = 0; i < currentTile.VerticalNeighbors.Count; i++)
+                    {
+                        if (!currentTile.VerticalNeighbors[i].IsSolid)
+                        {
+                            if (currentTile.VerticalNeighbors[i].distanceFromTarget < safety.First().distanceFromTarget)
+                            {
+                                hasShortestPath = currentTile.VerticalNeighbors[i];
+                            }
+                        }
+                    }
+
+                    if (safety.Contains(hasShortestPath))
+                    {
+                        hasShortestPath = safety.First();
+                        safety.Clear();
+                    }
                 }
-                else if (hasShortestPath.Position.X < currentTile.Position.X)
+                else
                 {
-                    tempDirection = new Vector2(0, -1);
+                    safety.Clear();
                 }
 
-                if (hasShortestPath.Position.Y > currentTile.Position.Y)
+                //hasShortestPath.color = Color.Green;
+
+                if (safety.Count == 0)
                 {
-                    tempDirection = new Vector2(1, 0);
+                    //Color = Color.Yellow;
+
+                    if (hasShortestPath.Position.Y == currentTile.Position.Y)
+                    {
+                        if (Position.Y == hasShortestPath.Position.Y)
+                        {
+                            if (hasShortestPath.Position.X > currentTile.Position.X)
+                            {
+                                tempDirection = new Vector2(1, 0);
+                            }
+                            else if (hasShortestPath.Position.X < currentTile.Position.X)
+                            {
+                                tempDirection = new Vector2(-1, 0);
+                            }
+                        }
+                        else
+                        {
+                            if (Position.Y > hasShortestPath.Position.Y)
+                            {
+                                tempDirection = new Vector2(0, -1);
+                            }
+                            else if (Position.Y < hasShortestPath.Position.Y)
+                            {
+                                tempDirection = new Vector2(0, 1);
+                            }
+                        }
+                    }
+                    else if (hasShortestPath.Position.X == currentTile.Position.X)
+                    {
+                        if (Position.X == hasShortestPath.Position.X)
+                        {
+                            if (hasShortestPath.Position.Y > currentTile.Position.Y)
+                            {
+                                tempDirection = new Vector2(0, 1);
+                            }
+                            else if (hasShortestPath.Position.Y < currentTile.Position.Y)
+                            {
+                                tempDirection = new Vector2(0, -1);
+                            }
+                        }
+                        else
+                        {
+                            if (Position.X > hasShortestPath.Position.X)
+                            {
+                                tempDirection = new Vector2(-1, 0);
+                            }
+                            else if (Position.X < hasShortestPath.Position.X)
+                            {
+                                tempDirection = new Vector2(1, 0);
+                            }
+                        }
+                    }
+                    else
+                    {
+                        Position = currentTile.Position;
+                        hasShortestPath = null;
+                    }
                 }
-                else if (hasShortestPath.Position.Y < currentTile.Position.Y)
+                else
                 {
-                    tempDirection = new Vector2(-1, 0);
+                    //Color = Color.Blue;
+
+                    Vector2 desiredVerticalDirection = Vector2.Zero;
+
+                    if (hasShortestPath.Position.Y > currentTile.Position.Y && hasShortestPath.Position.X > currentTile.Position.X)
+                    {
+                        desiredVerticalDirection = new Vector2(1, 1);
+                    }
+                    else if (hasShortestPath.Position.Y < currentTile.Position.Y && hasShortestPath.Position.X < currentTile.Position.X)
+                    {
+                        desiredVerticalDirection = new Vector2(-1, -1);
+                    }
+                    else if (hasShortestPath.Position.Y > currentTile.Position.Y && hasShortestPath.Position.X < currentTile.Position.X)
+                    {
+                        desiredVerticalDirection = new Vector2(-1, 1);
+                    }
+                    else if (hasShortestPath.Position.Y < currentTile.Position.Y && hasShortestPath.Position.X > currentTile.Position.X)
+                    {
+                        desiredVerticalDirection = new Vector2(1, -1);
+                    }
+
+                    float testXDir = desiredVerticalDirection.X, testYDir = desiredVerticalDirection.Y;
+
+                    if (!CanMoveInDirection(new Vector2(testXDir, 0), gameTime))
+                    {
+                        desiredVerticalDirection.X = 0;
+                    }
+                    else if (!CanMoveInDirection(new Vector2(0, testYDir), gameTime))
+                    {
+                        desiredVerticalDirection.Y = 0;
+                    }
+
+                    tempDirection = desiredVerticalDirection;
                 }
             }
         }
@@ -230,13 +361,6 @@ namespace TestProject
                     Library.TileMap.OnEnter(new OnEnterEventArgs { entered = this, tile = tile });
                 }
             }
-        }
-
-        public override void Draw(SpriteBatch spriteBatch)
-        {
-            base.Draw(spriteBatch);
-
-            //Library.DrawHitbox(spriteBatch, new Vector2(hitbox.Width, hitbox.Height), hitbox.Location.ToVector2(), Color.Black, 0.6f);
         }
     }
 }

@@ -132,10 +132,10 @@ namespace TestProject
                     {
                         Tile temp = tileMap[x + 1, y + 1];
 
-                        if (temp.IsSolid)
-                        {
-                            tileMap[x, y].hasSolidNeighbor = true;
-                        }
+                        //if (temp.IsSolid)
+                        //{
+                        //    tileMap[x, y].hasSolidNeighbor = true;
+                        //}
 
                         verticalNeighborTiles.Add(temp);
                     }
@@ -143,10 +143,10 @@ namespace TestProject
                     {
                         Tile temp = tileMap[x - 1, y + 1];
 
-                        if (temp.IsSolid)
-                        {
-                            tileMap[x, y].hasSolidNeighbor = true;
-                        }
+                        //if (temp.IsSolid)
+                        //{
+                        //    tileMap[x, y].hasSolidNeighbor = true;
+                        //}
 
                         verticalNeighborTiles.Add(temp);
                     }
@@ -154,10 +154,10 @@ namespace TestProject
                     {
                         Tile temp = tileMap[x - 1, y - 1];
 
-                        if (temp.IsSolid)
-                        {
-                            tileMap[x, y].hasSolidNeighbor = true;
-                        }
+                        //if (temp.IsSolid)
+                        //{
+                        //    tileMap[x, y].hasSolidNeighbor = true;
+                        //}
 
                         verticalNeighborTiles.Add(temp);
                     }
@@ -165,10 +165,10 @@ namespace TestProject
                     {
                         Tile temp = tileMap[x + 1, y - 1];
 
-                        if (temp.IsSolid)
-                        {
-                            tileMap[x, y].hasSolidNeighbor = true;
-                        }
+                        //if (temp.IsSolid)
+                        //{
+                        //    tileMap[x, y].hasSolidNeighbor = true;
+                        //}
 
                         verticalNeighborTiles.Add(temp);
                     }

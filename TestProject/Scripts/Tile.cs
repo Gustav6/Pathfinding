@@ -61,10 +61,12 @@ namespace TestProject
                     if (!hasSolidNeighbor)
                     {
                         spriteBatch.Draw(texture, Position, null, color, 0, origin, 1, SpriteEffects.None, 0);
+                        //spriteBatch.DrawString(TextureManager.Font, AdjacentNeighbors.Count.ToString(), new Vector2(Position.X - 12, Position.Y - 16), Color.Green);
                     }
                 }
                 else if (Library.showArrows2)
                 {
+                    //spriteBatch.DrawString(TextureManager.Font, VerticalNeighbors.Count.ToString(), new Vector2(Position.X - 12, Position.Y - 16), Color.Green);
                 }
                 else if (Library.showDistance)
                 {

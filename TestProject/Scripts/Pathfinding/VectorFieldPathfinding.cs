@@ -61,6 +61,11 @@ namespace TestProject
             for (int i = 0; i < Library.TileMap.AllTiles.Count; i++)
             {
                 Library.TileMap.AllTiles[i].distanceFromTarget = 0;
+
+                if (!Library.TileMap.AllTiles[i].IsSolid)
+                {
+                    Library.TileMap.AllTiles[i].color = Color.White;
+                }
             }
 
             Tile selectedTile = targetTile;
@@ -212,7 +217,8 @@ namespace TestProject
         private Vector2 LowestNumberDirection(Tile currentTile)
         {
             float xDirection = 0, yDirection = 0;
-            List<Tile> neighbors = currentTile.AdjacentNeighbors;
+            List<Tile> neighbors = new();
+            neighbors.AddRange(currentTile.AdjacentNeighbors);
 
             if (!currentTile.hasSolidNeighbor || currentTile.VerticalNeighbors.Contains(target))
             {

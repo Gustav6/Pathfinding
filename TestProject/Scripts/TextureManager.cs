@@ -30,7 +30,7 @@ namespace TestProject
             //Textures.TryAdd(Texture.enemyTexture, content.Load<Texture2D>(""));
             Textures.TryAdd(Texture.arrowTexture, content.Load<Texture2D>("arrow"));
             Textures.TryAdd(Texture.playerTexture, Library.CreateTexture(tileWidth, tileHeight, pixel => Color.DarkGreen));
-            Textures.TryAdd(Texture.enemyTexture, Library.CreateTexture(tileWidth, tileHeight, pixel => Color.Red));
+            Textures.TryAdd(Texture.enemyTexture, Library.CreateTexture(tileWidth, tileHeight, pixel => Color.White));
             Textures.TryAdd(Texture.hitboxTexture, Library.CreateTexture(tileWidth, tileHeight, pixel => Color.Green));
             #endregion
 

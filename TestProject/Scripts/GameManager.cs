@@ -112,18 +112,18 @@ namespace TestProject
 
             #region Debug
 
-            //if (Input.MouseIsPressed(Input.currentMS.LeftButton))
-            //{
-            //    for (int i = 0; i < 10; i++)
-            //    {
-            //        Library.gameObjects.Add(new FastEnemy(Input.currentMS.Position.ToVector2()));
-            //    }
-            //}
-
-            if (Input.MouseHasBeenPressed(Input.currentMS.LeftButton, Input.prevMS.LeftButton))
+            if (Input.MouseIsPressed(Input.currentMS.LeftButton))
             {
-                Library.gameObjects.Add(new FastEnemy(Input.currentMS.Position.ToVector2()));
+                for (int i = 0; i < 10; i++)
+                {
+                    Library.gameObjects.Add(new FastEnemy(Input.currentMS.Position.ToVector2()));
+                }
             }
+
+            //if (Input.MouseHasBeenPressed(Input.currentMS.LeftButton, Input.prevMS.LeftButton))
+            //{
+            //    Library.gameObjects.Add(new FastEnemy(Input.currentMS.Position.ToVector2()));
+            //}
 
             if (Input.MouseHasBeenPressed(Input.currentMS.RightButton, Input.prevMS.RightButton))
             {
