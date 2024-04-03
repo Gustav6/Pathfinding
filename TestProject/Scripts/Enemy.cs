@@ -86,86 +86,103 @@ namespace TestProject
             {
                 if (hasShortestPath != null)
                 {
-                    if (CanMoveInDirection(tempDirection, gameTime))
+                    if (tempDirection != Vector2.Zero)
                     {
-                        if (tempDirection.X != 0)
+                        if (CanMoveInDirection(tempDirection, gameTime))
                         {
-                            Vector2 nextPosition = Position + (tempDirection * movementSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds);
-
-                            if (tempDirection.X < 0 && nextPosition.X <= hasShortestPath.Position.X || tempDirection.X > 0 && nextPosition.X >= hasShortestPath.Position.X)
+                            if (tempDirection.X != 0)
                             {
-                                Position = new Vector2(hasShortestPath.Position.X, Position.Y);
-                                direction = Vector2.Zero;
+                                Vector2 nextPosition = Position + (tempDirection * movementSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds);
 
-                                if (CanMoveInDirection(desiredDirection, gameTime))
+                                if (tempDirection.X < 0 && nextPosition.X <= hasShortestPath.Position.X || tempDirection.X > 0 && nextPosition.X >= hasShortestPath.Position.X)
                                 {
-                                    hasShortestPath = null;
-                                    canMoveTowardsDesired = true;
-                                    tempDirection = Vector2.Zero;
+                                    Position = new Vector2(hasShortestPath.Position.X, Position.Y);
+                                    direction = Vector2.Zero;
+
+                                    if (CanMoveInDirection(desiredDirection, gameTime))
+                                    {
+                                        hasShortestPath = null;
+                                        canMoveTowardsDesired = true;
+                                        tempDirection = Vector2.Zero;
+                                    }
+                                }
+                                else
+                                {
+                                    direction = tempDirection;
                                 }
                             }
-                            else
-                            {
-                                direction = tempDirection;
-                            }
-                        }
-
-                        if (tempDirection.Y != 0)
-                        {
-                            Vector2 nextPosition = Position + (tempDirection * movementSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds);
-
-                            if (tempDirection.Y > 0 && nextPosition.Y >= hasShortestPath.Position.Y || tempDirection.Y < 0 && nextPosition.Y <= hasShortestPath.Position.Y)
-                            {
-                                Position = new Vector2(Position.X, hasShortestPath.Position.Y);
-                                direction = Vector2.Zero;
-
-                                if (CanMoveInDirection(desiredDirection, gameTime))
-                                {
-                                    hasShortestPath = null;
-                                    canMoveTowardsDesired = true;
-                                    tempDirection = Vector2.Zero;
-                                }
-                            }
-                            else
-                            {
-                                direction = tempDirection;
-                            }
-                        }
-                    }
-                    else
-                    {
-                        direction = Vector2.Zero;
-
-                        if (CanMoveInDirection(desiredDirection, gameTime))
-                        {
-                            canMoveTowardsDesired = true;
-                            tempDirection = Vector2.Zero;
-                        }
-                        else
-                        {
-                            Vector2 nextPosition = Position + (tempDirection * movementSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds);
 
                             if (tempDirection.Y != 0)
                             {
-                                if (nextPosition.Y != hasShortestPath.Position.Y)
+                                Vector2 nextPosition = Position + (tempDirection * movementSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds);
+
+                                if (tempDirection.Y > 0 && nextPosition.Y >= hasShortestPath.Position.Y || tempDirection.Y < 0 && nextPosition.Y <= hasShortestPath.Position.Y)
                                 {
-                                    Position = new Vector2(Position.X, currentTile.Position.Y);
+                                    Position = new Vector2(Position.X, hasShortestPath.Position.Y);
+                                    direction = Vector2.Zero;
+
+                                    if (CanMoveInDirection(desiredDirection, gameTime))
+                                    {
+                                        hasShortestPath = null;
+                                        canMoveTowardsDesired = true;
+                                        tempDirection = Vector2.Zero;
+                                    }
+                                }
+                                else
+                                {
+                                    direction = tempDirection;
                                 }
                             }
-                            else if (tempDirection.X != 0)
+                        }
+                        else
+                        {
+                            direction = Vector2.Zero;
+
+                            if (CanMoveInDirection(desiredDirection, gameTime))
                             {
-                                if (nextPosition.Y != hasShortestPath.Position.Y)
+                                canMoveTowardsDesired = true;
+                                tempDirection = Vector2.Zero;
+                            }
+                            else
+                            {
+                                Vector2 nextPosition = Position + (tempDirection * movementSpeed * (float)gameTime.ElapsedGameTime.TotalSeconds);
+
+                                if (tempDirection.Y != 0)
                                 {
-                                    Position = new Vector2(currentTile.Position.X, Position.Y);
+                                    if (nextPosition.Y != hasShortestPath.Position.Y)
+                                    {
+                                        Position = new Vector2(Position.X, currentTile.Position.Y);
+                                        tempDirection = Vector2.Zero;
+                                    }
+                                }
+
+                                if (tempDirection.X != 0)
+                                {
+                                    if (nextPosition.Y != hasShortestPath.Position.Y)
+                                    {
+                                        Position = new Vector2(currentTile.Position.X, Position.Y);
+                                        tempDirection = Vector2.Zero;
+                                    }
                                 }
                             }
                         }
                     }
+                    else if (!canMoveTowardsDesired)
+                    {
+                        MoveTowardsNewTile(gameTime);
+                    }
                 }
-
-                if (tempDirection == Vector2.Zero && !canMoveTowardsDesired)
+                else
                 {
-                    MoveTowardsNewTile(gameTime);
+                    if (CanMoveInDirection(desiredDirection, gameTime))
+                    {
+                        canMoveTowardsDesired = true;
+                        tempDirection = Vector2.Zero;
+                    }
+                    else
+                    {
+                        MoveTowardsNewTile(gameTime);
+                    }
                 }
             }
         }

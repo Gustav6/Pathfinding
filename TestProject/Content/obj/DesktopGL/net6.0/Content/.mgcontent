@@ -4,8 +4,8 @@
   <Platform>DesktopGL</Platform>
   <Config />
   <SourceFiles>
-    <File>C:/Users/gusta/Documents/Github/PathFinder/Pathfinding/TestProject/Content/59209.png</File>
-    <File>C:/Users/gusta/Documents/Github/PathFinder/Pathfinding/TestProject/Content/File.spritefont</File>
+    <File>C:/Users/gustav.ekstrom1/Documents/GitHub/Pathfinding/TestProject/Content/59209.png</File>
+    <File>C:/Users/gustav.ekstrom1/Documents/GitHub/Pathfinding/TestProject/Content/File.spritefont</File>
   </SourceFiles>
   <DestFiles>
     <File>arrow.png</File>
