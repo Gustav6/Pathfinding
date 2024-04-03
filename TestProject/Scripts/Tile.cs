@@ -45,14 +45,16 @@ namespace TestProject
 
         public void Draw(SpriteBatch spriteBatch)
         {
-            if (direction != Vector2.Zero && !Library.showArrows1)
-            {
-                spriteBatch.Draw(texture, Position, null, color, 0, origin, 1, SpriteEffects.None, 0);
-            }
-            else if (direction == Vector2.Zero && IsSolid)
-            {
-                spriteBatch.Draw(texture, Position, null, color, 0, origin, 1, SpriteEffects.None, 0);
-            }
+            spriteBatch.Draw(texture, Position, null, color, 0, origin, 1, SpriteEffects.None, 0);
+
+            //if (direction != Vector2.Zero && !Library.showArrows1)
+            //{
+            //    spriteBatch.Draw(texture, Position, null, color, 0, origin, 1, SpriteEffects.None, 0);
+            //}
+            //else if (direction == Vector2.Zero && IsSolid)
+            //{
+            //    spriteBatch.Draw(texture, Position, null, color, 0, origin, 1, SpriteEffects.None, 0);
+            //}
 
             if (!IsSolid)
             {
